@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>반려동물 동반 여행 지도</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard',-apple-system,'Noto Sans KR',sans-serif}
+#map{width:100%;height:100vh}
+
+.header{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  background:linear-gradient(135deg,#7c3aed,#2563eb);
+  color:#fff;padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 4px 20px rgba(0,0,0,.25);
+}
+.header h1{font-size:20px;font-weight:800;letter-spacing:-0.5px}
+.header h1 span{font-size:24px;margin-right:6px}
+.header-badges{display:flex;gap:8px}
+.badge{background:rgba(255,255,255,.18);padding:5px 14px;border-radius:20px;font-size:13px;font-weight:600;backdrop-filter:blur(4px)}
+.badge.busan{background:rgba(255,200,50,.3)}
+
+.panel{
+  position:fixed;top:70px;left:16px;z-index:1000;
+  background:#fff;border-radius:16px;padding:18px;
+  box-shadow:0 8px 32px rgba(0,0,0,.12);
+  width:220px;font-size:13px;
+  max-height:calc(100vh - 100px);overflow-y:auto;
+}
+.panel h3{font-size:15px;font-weight:700;margin-bottom:12px;color:#1e1b4b}
+.panel hr{border:none;border-top:1px solid #e5e7eb;margin:12px 0}
+
+.legend-item{
+  display:flex;align-items:center;gap:8px;cursor:pointer;
+  padding:4px 0;user-select:none;
+}
+.legend-item input{accent-color:#7c3aed;width:15px;height:15px}
+.dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+
+select{
+  width:100%;padding:8px 10px;border:1.5px solid #e5e7eb;border-radius:10px;
+  font-size:13px;margin-top:6px;background:#f9fafb;
+  font-family:inherit;
+}
+
+.btn{
+  width:100%;padding:9px;border:none;border-radius:10px;
+  font-size:13px;font-weight:600;cursor:pointer;margin-top:8px;
+  font-family:inherit;transition:all .15s;
+}
+.btn-busan{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff}
+.btn-busan:hover{opacity:.85}
+.btn-all{background:#f3f4f6;color:#374151}
+.btn-all:hover{background:#e5e7eb}
+
+.info-box{
+  position:fixed;bottom:20px;right:16px;z-index:1000;
+  background:#fff;padding:14px 18px;border-radius:14px;
+  box-shadow:0 6px 24px rgba(0,0,0,.1);font-size:12px;
+  color:#6b7280;max-width:240px;line-height:1.6;
+}
+.info-box a{color:#7c3aed;text-decoration:none;font-weight:600}
+
+.marker-icon{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:3px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.3);
+  font-size:15px;color:#fff;transition:transform .15s;
+}
+.marker-icon:hover{transform:scale(1.2)}
+.marker-icon.busan-marker{border-color:#fbbf24;box-shadow:0 0 0 2px #fbbf24,0 3px 8px rgba(0,0,0,.3)}
+
+.leaflet-popup-content-wrapper{border-radius:14px!important;box-shadow:0 8px 30px rgba(0,0,0,.15)!important}
+.leaflet-popup-content{margin:0!important;padding:0!important;width:280px!important}
+.popup-card img{width:100%;height:160px;object-fit:cover;border-radius:14px 14px 0 0}
+.popup-card .body{padding:14px}
+.popup-card h3{font-size:16px;font-weight:700;color:#1e1b4b;margin-bottom:6px}
+.popup-card .type-badge{
+  display:inline-block;padding:3px 10px;border-radius:8px;
+  font-size:11px;font-weight:600;color:#fff;margin-bottom:8px;
+}
+.popup-card .addr{font-size:12px;color:#6b7280;margin-bottom:4px}
+.popup-card .tel{font-size:12px;color:#7c3aed;font-weight:500}
+.popup-card .site-link{
+  display:block;margin-top:10px;padding:8px 12px;
+  background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;
+  border-radius:8px;text-decoration:none;font-size:12px;font-weight:600;
+  text-align:center;transition:opacity .15s;
+}
+.popup-card .site-link:hover{opacity:.85}
+.popup-card .busan-tag{
+  display:inline-block;background:#fef3c7;color:#92400e;
+  padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-left:6px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1><span>🐾</span>반려동물 동반 여행 지도</h1>
+  <div class="header-badges">
+    <span class="badge busan">부산 8곳</span>
+    <span class="badge">전국 114곳</span>
+  </div>
+</div>
+
+<div class="panel">
+  <h3>카테고리 필터</h3>
+  <label class="legend-item"><input type="checkbox" checked data-type="관광지"><span class="dot" style="background:#10b981"></span>관광지 (46)</label><label class="legend-item"><input type="checkbox" checked data-type="축제/행사"><span class="dot" style="background:#ef4444"></span>축제/행사 (13)</label><label class="legend-item"><input type="checkbox" checked data-type="레포츠"><span class="dot" style="background:#f59e0b"></span>레포츠 (13)</label><label class="legend-item"><input type="checkbox" checked data-type="숙박"><span class="dot" style="background:#3b82f6"></span>숙박 (25)</label><label class="legend-item"><input type="checkbox" checked data-type="쇼핑"><span class="dot" style="background:#ec4899"></span>쇼핑 (6)</label><label class="legend-item"><input type="checkbox" checked data-type="음식점"><span class="dot" style="background:#f97316"></span>음식점 (11)</label>
+  <hr>
+  <h3>지역 필터</h3>
+  <select id="regionFilter">
+    <option value="">전체 지역</option>
+    <option value="강원특별자치도">강원특별자치도 (32)</option><option value="경기도">경기도 (26)</option><option value="경상북도">경상북도 (9)</option><option value="충청북도">충청북도 (9)</option><option value="부산광역시">부산광역시 (8)</option><option value="경상남도">경상남도 (6)</option><option value="인천광역시">인천광역시 (5)</option><option value="대전광역시">대전광역시 (3)</option><option value="울산광역시">울산광역시 (3)</option><option value="전북특별자치도">전북특별자치도 (3)</option><option value="서울특별시">서울특별시 (3)</option><option value="전라남도">전라남도 (2)</option><option value="제주특별자치도">제주특별자치도 (2)</option><option value="충청남도">충청남도 (2)</option><option value="경기">경기 (1)</option>
+  </select>
+  <hr>
+  <button class="btn btn-busan" onclick="goToBusan()">📍 부산 보기</button>
+  <button class="btn btn-all" onclick="goToAll()">🗺 전국 보기</button>
+</div>
+
+<div class="info-box">
+  <strong>사용법</strong><br>
+  마커를 클릭하면 상세 정보를 볼 수 있습니다.<br>
+  카테고리/지역으로 필터링할 수 있습니다.<br>
+  <span style="color:#fbbf24">●</span> 금색 테두리 = 부산 장소<br><br>
+  데이터: <a href="https://api.visitkorea.or.kr" target="_blank">한국관광공사 TourAPI</a>
+</div>
+
+<div id="map"></div>
+
+<script>
+var spots = [{"lat": 37.8209234278, "lng": 127.5208753809, "title": "가평군 반려동물 문화행사 활짝펫", "addr": "경기도 가평군 가평읍 자라섬로 60", "tel": "070-8233-0333", "type": "축제/행사", "color": "#ef4444", "icon": "fa-calendar", "emoji": "🎉", "img": "http://tong.visitkorea.or.kr/cms/resource/17/3493917_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.2539, "lng": 127.0953, "title": "기흥레스피아호수공원 반려동물놀이터", "addr": "경기도 용인시 기흥구 하갈동", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "https://tong.visitkorea.or.kr/cms/resource/30/3559630_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 36.4597299541423, "lng": 127.384460411507, "title": "대전반려동물공원", "addr": "대전광역시 유성구 금고길 7", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "", "busan": false, "homepage": ""}, {"lat": 36.742190681820695, "lng": 128.08199966598428, "title": "문경새재 반려동물 힐링센터", "addr": "경상북도 문경시 문경읍 문경대로 2430", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "https://tong.visitkorea.or.kr/cms/resource/43/3517143_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 36.7422389223, "lng": 128.0820225798, "title": "반려동물힐링센터 글램핑", "addr": "경상북도 문경시 문경대로 2430", "tel": "", "type": "레포츠", "color": "#f59e0b", "icon": "fa-person-biking", "emoji": "🚴", "img": "http://tong.visitkorea.or.kr/cms/resource/10/2909610_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 35.1011951345, "lng": 129.0323594995, "title": "부산중구반려동물축제", "addr": "부산광역시 중구 용두산길 37-30 (광복동2가)", "tel": "070-8893-2437", "type": "축제/행사", "color": "#ef4444", "icon": "fa-calendar", "emoji": "🎉", "img": "http://tong.visitkorea.or.kr/cms/resource/63/3559563_image2_1.jpg", "busan": true, "homepage": ""}, {"lat": 34.8145236688, "lng": 126.4294783878, "title": "부주산 반려동물놀이터", "addr": "전라남도 목포시 녹색로 139 (옥암동)", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "", "busan": false, "homepage": ""}, {"lat": 34.94866091803188, "lng": 127.49742471112845, "title": "순천 반려동물 문화센터", "addr": "전라남도 순천시 역전길 50 (조곡동)", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "", "busan": false, "homepage": ""}, {"lat": 35.6347442892, "lng": 129.3676487809, "title": "애니언파크(울산 반려동물 문화센터)", "addr": "울산광역시 북구 호계매곡6로 108", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "http://tong.visitkorea.or.kr/cms/resource/79/2917379_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 19.69442748, "lng": 117.9925662504, "title": "오산반려동물테마파크", "addr": "경기도 오산시 오산천로 72", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "http://tong.visitkorea.or.kr/cms/resource/59/3325759_image2_1.JPG", "busan": false, "homepage": ""}, {"lat": 36.2497753657, "lng": 127.5980184068, "title": "옥천군 반려동물 놀이터", "addr": "충청북도 옥천군 이원면 장찬리", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "", "busan": false, "homepage": ""}, {"lat": 37.3444506969, "lng": 127.960221718, "title": "원주시 반려동물 문화행사 &lt;애니멀 대학&gt;", "addr": "강원특별자치도 원주시 봉산동", "tel": "033-813-0333", "type": "축제/행사", "color": "#ef4444", "icon": "fa-calendar", "emoji": "🎉", "img": "http://tong.visitkorea.or.kr/cms/resource/08/3546108_image2_1.png", "busan": false, "homepage": ""}, {"lat": 36.037449422, "lng": 126.9557703043, "title": "익산시 반려동물 놀이터", "addr": "전북특별자치도 익산시 익산대로 1324-21", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "", "busan": false, "homepage": ""}, {"lat": 37.4577461335, "lng": 126.749303301, "title": "인천대공원 반려동물 놀이터", "addr": "인천광역시 남동구 무네미로 236", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "http://tong.visitkorea.or.kr/cms/resource/51/3590851_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 36.7035003719896, "lng": 127.553357528953, "title": "청주시 반려동물 문화행사", "addr": "충청북도 청주시 청원구 내수읍 덕암길 10", "tel": "033-813-0333", "type": "축제/행사", "color": "#ef4444", "icon": "fa-calendar", "emoji": "🎉", "img": "https://tong.visitkorea.or.kr/cms/resource/91/4065291_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.9416101578, "lng": 127.7122821547, "title": "춘천시 반려동물 놀이터 같이놀개", "addr": "강원특별자치도 춘천시 신북읍 영서로 3282", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "", "busan": false, "homepage": ""}, {"lat": 33.491875672, "lng": 126.5238621803, "title": "2025 제주 반려동물 문화산업 한마당", "addr": "제주특별자치도 제주시 연삼로 286 (도남동)", "tel": "064-711-1002", "type": "축제/행사", "color": "#ef4444", "icon": "fa-calendar", "emoji": "🎉", "img": "http://tong.visitkorea.or.kr/cms/resource/39/3524439_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.7726047009298, "lng": 128.947338719945, "title": "강릉해양레저 펫가족 힐링페스티벌", "addr": "강원특별자치도 강릉시 창해로14번길 20-1 (견소동)", "tel": "033-643-9959", "type": "축제/행사", "color": "#ef4444", "icon": "fa-calendar", "emoji": "🎉", "img": "https://tong.visitkorea.or.kr/cms/resource/64/4056764_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.2188140661, "lng": 127.1364692382, "title": "골드펫리조트", "addr": "경기도 용인시 기흥구 기흥단지로 406 (고매동, 골드훼미리콘도)", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "", "busan": false, "homepage": ""}, {"lat": 37.5325855879, "lng": 126.6449773992, "title": "누닝 펫푸드카페", "addr": "인천광역시 서구 청라커낼로 270 (청라동)", "tel": "", "type": "음식점", "color": "#f97316", "icon": "fa-utensils", "emoji": "🍽", "img": "http://tong.visitkorea.or.kr/cms/resource/58/2603758_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 36.1415966922556, "lng": 128.442232571322, "title": "대한민국 펫캉스", "addr": "경상북도 구미시 산동읍 첨단기업1로 49", "tel": "053-567-4497", "type": "축제/행사", "color": "#ef4444", "icon": "fa-calendar", "emoji": "🎉", "img": "https://tong.visitkorea.or.kr/cms/resource/48/4065648_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 35.1592408683, "lng": 129.1531418525, "title": "더펫텔프리미엄스위트", "addr": "부산광역시 해운대구 해운대해변로197번길 12", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "http://tong.visitkorea.or.kr/cms/resource/16/2754616_image2_1.jpg", "busan": true, "homepage": "http://thepetel.com/"}, {"lat": 37.2365290775, "lng": 126.5309181873, "title": "러블리펫108 애견펜션", "addr": "인천광역시 옹진군 영흥면 선재로 76-27", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "", "busan": false, "homepage": ""}, {"lat": 36.717323255, "lng": 127.3679428523, "title": "멍글멍글 펫 글램핑", "addr": "충청북도 청주시 청원구 오창읍 오산가좌로 650-28", "tel": "", "type": "레포츠", "color": "#f59e0b", "icon": "fa-person-biking", "emoji": "🚴", "img": "http://tong.visitkorea.or.kr/cms/resource/24/2793824_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.6469771187284, "lng": 126.89477806511, "title": "몰리스펫샵 스타필드 고양점", "addr": "경기도 고양시 덕양구 고양대로 1955 (동산동)", "tel": "", "type": "쇼핑", "color": "#ec4899", "icon": "fa-bag-shopping", "emoji": "🛍", "img": "https://tong.visitkorea.or.kr/cms/resource/75/4018775_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.2874453391147, "lng": 126.991574559571, "title": "몰리스펫샵 스타필드 수원점", "addr": "경기도 수원시 장안구 수성로 175 (정자동)", "tel": "", "type": "쇼핑", "color": "#ec4899", "icon": "fa-bag-shopping", "emoji": "🛍", "img": "https://tong.visitkorea.or.kr/cms/resource/08/4042908_image2_1.JPG", "busan": false, "homepage": ""}, {"lat": 37.4615202479021, "lng": 126.813940279533, "title": "몰리스펫샵 스타필드 시티 부천점", "addr": "경기도 부천시 소사구 옥길로 1 (옥길동)", "tel": "", "type": "쇼핑", "color": "#ec4899", "icon": "fa-bag-shopping", "emoji": "🛍", "img": "https://tong.visitkorea.or.kr/cms/resource/03/4042803_image2_1.JPG", "busan": false, "homepage": ""}, {"lat": 37.5454041231797, "lng": 127.223940331575, "title": "몰리스펫샵 스타필드 하남점", "addr": "경기도 하남시 미사대로 750 (신장동)", "tel": "", "type": "쇼핑", "color": "#ec4899", "icon": "fa-bag-shopping", "emoji": "🛍", "img": "https://tong.visitkorea.or.kr/cms/resource/09/4045309_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 35.1698614224623, "lng": 129.12829006113, "title": "몰리스펫샵 신세계 센텀시티몰", "addr": "부산광역시 해운대구 센텀4로 15 (우동)", "tel": "", "type": "쇼핑", "color": "#ec4899", "icon": "fa-bag-shopping", "emoji": "🛍", "img": "https://tong.visitkorea.or.kr/cms/resource/08/4019308_image2_1.jpg", "busan": true, "homepage": ""}, {"lat": 37.7963861364, "lng": 128.9172912659, "title": "블루앤펫", "addr": "강원특별자치도 강릉시 창해로350번길 25", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "http://tong.visitkorea.or.kr/cms/resource/50/2920450_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 35.4386762281, "lng": 127.7778630809, "title": "산청 펫글램핑", "addr": "경상남도 산청군 금서면 화계오봉로 349-35", "tel": "", "type": "레포츠", "color": "#f59e0b", "icon": "fa-person-biking", "emoji": "🚴", "img": "http://tong.visitkorea.or.kr/cms/resource/94/2799894_image2_1.JPG", "busan": false, "homepage": ""}, {"lat": 37.6407201863578, "lng": 127.677898405694, "title": "소노펫클럽앤리조트", "addr": "강원특별자치도 홍천군 서면 한치골길 262", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "", "busan": false, "homepage": ""}, {"lat": 37.214323, "lng": 127.295876, "title": "양지파인펫파크", "addr": "경기도 용인시 처인구 양지면 남평로 112", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "https://tong.visitkorea.or.kr/cms/resource/13/3040713_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 35.335239, "lng": 129.170317, "title": "어라운드펫", "addr": "부산광역시 기장군 정관읍 병산로 2", "tel": "", "type": "음식점", "color": "#f97316", "icon": "fa-utensils", "emoji": "🍽", "img": "", "busan": true, "homepage": ""}, {"lat": 36.3921822012909, "lng": 128.427287711011, "title": "의성 펫월드", "addr": "경상북도 의성군 단북면 안계길 255-13", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "https://tong.visitkorea.or.kr/cms/resource/40/4039840_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 35.5400154875724, "lng": 127.336421060977, "title": "임실N펫스타", "addr": "전북특별자치도 임실군 오수면 의견로 3", "tel": "063-640-4473", "type": "축제/행사", "color": "#ef4444", "icon": "fa-calendar", "emoji": "🎉", "img": "https://tong.visitkorea.or.kr/cms/resource/01/4054001_image2_1.JPG", "busan": false, "homepage": ""}, {"lat": 37.645768208, "lng": 126.8766919532, "title": "코코앤몽 펫카페", "addr": "경기도 고양시 덕양구 고양대로 1760 (삼송동)", "tel": "", "type": "음식점", "color": "#f97316", "icon": "fa-utensils", "emoji": "🍽", "img": "http://tong.visitkorea.or.kr/cms/resource/51/2735051_image2_1.jpeg", "busan": false, "homepage": ""}, {"lat": 36.3424269014, "lng": 127.34271925, "title": "쿠쿠펫", "addr": "대전광역시 유성구 봉명로 27-7 (원신흥동)", "tel": "", "type": "음식점", "color": "#f97316", "icon": "fa-utensils", "emoji": "🍽", "img": "http://tong.visitkorea.or.kr/cms/resource/76/2951576_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.1992404182, "lng": 127.0855160695, "title": "튼튼 펫 페스타", "addr": "경기도 화성시 동부대로 1063-3 (오산동)", "tel": "010-3577-2985", "type": "축제/행사", "color": "#ef4444", "icon": "fa-calendar", "emoji": "🎉", "img": "http://tong.visitkorea.or.kr/cms/resource/76/3536376_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.1028989597, "lng": 127.7102706696, "title": "펫 트리파크", "addr": "충청북도 충주시 앙성면 둔터로 625-31", "tel": "", "type": "레포츠", "color": "#f59e0b", "icon": "fa-person-biking", "emoji": "🚴", "img": "http://tong.visitkorea.or.kr/cms/resource/56/2798656_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.2884994745, "lng": 127.995164643, "title": "펫타운", "addr": "강원특별자치도 원주시 판부면 치악로 1071", "tel": "", "type": "음식점", "color": "#f97316", "icon": "fa-utensils", "emoji": "🍽", "img": "http://tong.visitkorea.or.kr/cms/resource/04/2919904_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 36.345579379602135, "lng": 127.36762956345119, "title": "펫터테인먼트", "addr": "대전광역시 서구 계룡로354번길 175 (갈마동)", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "https://tong.visitkorea.or.kr/cms/resource/67/4005867_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.6088650533, "lng": 127.6887385548, "title": "펫티움애견펜션", "addr": "강원특별자치도 홍천군 서면 한서로 2344-12", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "http://tong.visitkorea.or.kr/cms/resource/86/2717386_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.1745681696541, "lng": 128.401786717758, "title": "펫힐링 달빛동물원", "addr": "강원특별자치도 영월군 남면 연당리", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "", "busan": false, "homepage": ""}, {"lat": 38.082930787121526, "lng": 127.20857972265999, "title": "포천펫스타", "addr": "경기도 포천시 관인면 창동로 832", "tel": "0502-1949-0514", "type": "축제/행사", "color": "#ef4444", "icon": "fa-calendar", "emoji": "🎉", "img": "https://tong.visitkorea.or.kr/cms/resource/14/4059414_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.73824102430165, "lng": 128.02776608883508, "title": "풀스테이 스테이펫 홍천", "addr": "강원특별자치도 홍천군 화촌면 답연밭길 5-2", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "https://tong.visitkorea.or.kr/cms/resource/04/3543704_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 36.621515627659875, "lng": 127.12998602881542, "title": "하림펫푸드 해피댄스스튜디오", "addr": "충청남도 공주시 정안면 정안농공단지길 32-111", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "", "busan": false, "homepage": ""}, {"lat": 37.2913267465, "lng": 127.3806506302, "title": "2025 이천펫축제", "addr": "경기도 이천시 신둔면 도자예술로62번길 123", "tel": "031-645-3683", "type": "축제/행사", "color": "#ef4444", "icon": "fa-calendar", "emoji": "🎉", "img": "http://tong.visitkorea.or.kr/cms/resource/87/3521787_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 35.7821186485, "lng": 129.3302728568, "title": "경주애견펜션 노비오스", "addr": "경상북도 경주시 진티길 37-4", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "http://tong.visitkorea.or.kr/cms/resource/00/2499400_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.8081785994, "lng": 128.8856798604, "title": "경포도도애견펜션", "addr": "강원특별자치도 강릉시 하남길 197-15", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "http://tong.visitkorea.or.kr/cms/resource/71/2920171_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.0946282856, "lng": 127.4377621468, "title": "내츄럴리조트 애견캠핑장", "addr": "경기도 안성시 죽산면 죽양대로 136-17", "tel": "", "type": "레포츠", "color": "#f59e0b", "icon": "fa-person-biking", "emoji": "🚴", "img": "http://tong.visitkorea.or.kr/cms/resource/55/2797355_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.908566971, "lng": 127.5730930423, "title": "또바기 애견 글램핑 펜션", "addr": "경기도 가평군 북면 멱골로 205-10", "tel": "", "type": "레포츠", "color": "#f59e0b", "icon": "fa-person-biking", "emoji": "🚴", "img": "http://tong.visitkorea.or.kr/cms/resource/71/2909671_image2_1.JPG", "busan": false, "homepage": ""}, {"lat": 36.8591717527, "lng": 127.8781208517, "title": "루파니애견캠핑장", "addr": "충청북도 괴산군 감물면 감물로 362-54", "tel": "", "type": "레포츠", "color": "#f59e0b", "icon": "fa-person-biking", "emoji": "🚴", "img": "http://tong.visitkorea.or.kr/cms/resource/25/3578825_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.6608497995, "lng": 127.4900050878, "title": "링크독애견파크 글램핑&amp;오토캠핑장", "addr": "경기도 가평군 설악면 신천중앙로28번길 101-60", "tel": "", "type": "레포츠", "color": "#f59e0b", "icon": "fa-person-biking", "emoji": "🚴", "img": "http://tong.visitkorea.or.kr/cms/resource/76/2758476_image2_1.JPG", "busan": false, "homepage": ""}, {"lat": 38.0459957539, "lng": 128.6149525114, "title": "발렌타인애견펜션", "addr": "강원특별자치도 양양군 손양면 남대천로 251-117", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "http://tong.visitkorea.or.kr/cms/resource/91/2920191_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.8608177179, "lng": 127.7625022061, "title": "발바닥 애견카페", "addr": "강원특별자치도 춘천시 동내면 거두길 26", "tel": "", "type": "음식점", "color": "#f97316", "icon": "fa-utensils", "emoji": "🍽", "img": "http://tong.visitkorea.or.kr/cms/resource/84/2918884_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.4289968598, "lng": 126.9148779134, "title": "삼막애견공원", "addr": "경기도 안양시 만안구 석수동 18", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "http://tong.visitkorea.or.kr/cms/resource/63/2768263_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.916884041, "lng": 127.7958113953, "title": "스누피 애견카페", "addr": "강원특별자치도 춘천시 동면 금옥길 132", "tel": "", "type": "음식점", "color": "#f97316", "icon": "fa-utensils", "emoji": "🍽", "img": "http://tong.visitkorea.or.kr/cms/resource/63/2919963_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.3818736659, "lng": 129.2432470395, "title": "신나개 애견펜션", "addr": "강원특별자치도 삼척시 근덕면 덕산해안로 78", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "http://tong.visitkorea.or.kr/cms/resource/00/2920900_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 36.738710419, "lng": 126.1352841129, "title": "애견민박 멍집", "addr": "충청남도 태안군 소원면 파도길 71-7", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "http://tong.visitkorea.or.kr/cms/resource/90/3579590_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.9533540227, "lng": 128.7728272095, "title": "애견전용해수욕장 멍비치", "addr": "강원특별자치도 양양군 현남면 광진리", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "http://tong.visitkorea.or.kr/cms/resource/79/2603579_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 35.532, "lng": 129.2727, "title": "울산애견공원", "addr": "울산광역시 남구 남부순환도로 209", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "https://tong.visitkorea.or.kr/cms/resource/02/3510802_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 35.7412033678, "lng": 129.3065788728, "title": "위클라드 애견 풀빌라", "addr": "경상북도 경주시 외동읍 죽동길 160-100", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "", "busan": false, "homepage": ""}, {"lat": 37.2806502327, "lng": 129.2965620555, "title": "정원가든 애견동반펜션", "addr": "강원특별자치도 삼척시 근덕면 용화안길 225-1", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "http://tong.visitkorea.or.kr/cms/resource/60/2920860_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.4689426634, "lng": 126.7835831972, "title": "코코애견카페", "addr": "경기도 시흥시 하우로 152 (대야동)", "tel": "", "type": "음식점", "color": "#f97316", "icon": "fa-utensils", "emoji": "🍽", "img": "http://tong.visitkorea.or.kr/cms/resource/42/2748742_image2_1.jpeg", "busan": false, "homepage": ""}, {"lat": 37.8693343549, "lng": 128.8317467181, "title": "파인힐 애견펜션", "addr": "강원특별자치도 강릉시 연곡면 동해대로 4371-27", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "http://tong.visitkorea.or.kr/cms/resource/40/2920440_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.4794187573, "lng": 128.2736283606, "title": "평창듀오애견수영장계곡펜션", "addr": "강원특별자치도 평창군 방림면 감동지길 116-4", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "http://tong.visitkorea.or.kr/cms/resource/50/2920350_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.811786411, "lng": 128.8803441182, "title": "프렌즈애견펜션", "addr": "강원특별자치도 강릉시 하남길 117-4", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "http://tong.visitkorea.or.kr/cms/resource/10/2921110_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 38.082918414, "lng": 128.5722941219, "title": "하얀멍이 애견펜션", "addr": "강원특별자치도 양양군 서면 들돌길 207", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "http://tong.visitkorea.or.kr/cms/resource/64/2920764_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 38.018201338, "lng": 126.9630900566, "title": "행복하개 애견 펜션", "addr": "경기도 연천군 미산면 노아로 670-84", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "http://tong.visitkorea.or.kr/cms/resource/21/2961521_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.2886549896, "lng": 129.3027029283, "title": "힐링캠프 애견동반 펜션", "addr": "강원특별자치도 삼척시 근덕면 용화안길 14", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "http://tong.visitkorea.or.kr/cms/resource/90/2920890_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 36.03113166, "lng": 127.0112599577, "title": "PTP 애견테마파크", "addr": "전북특별자치도 익산시 진북로 294-18", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "http://tong.visitkorea.or.kr/cms/resource/61/3369461_image2_1.JPG", "busan": false, "homepage": ""}, {"lat": 37.2835610668, "lng": 127.0772644577, "title": "광교호수공원 반려견 놀이터", "addr": "경기도 수원시 영통구 광교호수로 214 광교호수공원시설 주차관리소", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "http://tong.visitkorea.or.kr/cms/resource/57/3400857_image2_1.JPG", "busan": false, "homepage": ""}, {"lat": 37.2974370444597, "lng": 126.825891838858, "title": "반가운축제 (반려견과 가치있게 운동하는 축제)", "addr": "경기도 안산시 상록구 해안로 615 (사동)", "tel": "1533-0799", "type": "축제/행사", "color": "#ef4444", "icon": "fa-calendar", "emoji": "🎉", "img": "https://tong.visitkorea.or.kr/cms/resource/59/4064359_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.1861106486, "lng": 128.4063306679, "title": "별빛 반려견놀이터", "addr": "강원특별자치도 영월군 연당리 1023", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "", "busan": false, "homepage": ""}, {"lat": 37.1861106486, "lng": 128.4063306679, "title": "별빛반려견 놀이터", "addr": "강원특별자치도 영월군 남면 연당로 61", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "http://tong.visitkorea.or.kr/cms/resource/13/2922313_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 36.78517, "lng": 127.5722, "title": "보강천 반려견 놀이터", "addr": "충청북도 증평군 증평읍 연탄리", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "", "busan": false, "homepage": ""}, {"lat": 35.4928916546, "lng": 129.4133460299, "title": "봉화재 반려견 놀이터", "addr": "울산광역시 동구 봉수로 27-53", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "http://tong.visitkorea.or.kr/cms/resource/38/3341838_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.0249788699, "lng": 127.4866180357, "title": "삼성 반려견 놀이터", "addr": "충청북도 음성군 삼성면 양덕리", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "", "busan": false, "homepage": ""}, {"lat": 38.2145502761, "lng": 128.5699457931, "title": "속초시 반려견놀이터", "addr": "강원특별자치도 속초시 영랑호반길 329-1(장사동)", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "http://tong.visitkorea.or.kr/cms/resource/86/2922286_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.2958945407, "lng": 127.9251068553, "title": "아름들 반려견쉼터", "addr": "강원특별자치도 원주시 흥업면 자재기길 85", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "http://tong.visitkorea.or.kr/cms/resource/39/3340539_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 36.8714682206, "lng": 127.6096196145, "title": "원남 반려견 놀이터", "addr": "충청북도 음성군 원남면 조촌리", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "", "busan": false, "homepage": ""}, {"lat": 37.4577461335, "lng": 126.749303301, "title": "인천대공원 반려견놀이터", "addr": "인천광역시 남동구 무네미로 236", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "", "busan": false, "homepage": ""}, {"lat": 37.6499, "lng": 126.7674, "title": "일산호수공원 반려견놀이터", "addr": "경기 고양시 일산동구 장항동 903-1", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "https://tong.visitkorea.or.kr/cms/resource/51/3513651_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 35.1597332034, "lng": 128.1220068512, "title": "진주휴게소반려견놀이터", "addr": "경상남도 진주시 남해고속도로 194 진주휴게소", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "http://tong.visitkorea.or.kr/cms/resource/20/3349420_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 35.6119866499, "lng": 128.8219332723, "title": "청도 원더랜드 (반려견 전용 숙박체험공간)", "addr": "경상북도 청도군 매전면 청매로 825", "tel": "", "type": "레포츠", "color": "#f59e0b", "icon": "fa-person-biking", "emoji": "🚴", "img": "http://tong.visitkorea.or.kr/cms/resource/92/3334492_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 36.6765626914, "lng": 127.4472812967, "title": "청주시 반려견 놀이터", "addr": "충청북도 청주시 흥덕구 무심서로 1097", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "", "busan": false, "homepage": ""}, {"lat": 37.9416101578, "lng": 127.7122821547, "title": "춘천시 반려견놀이터 같이놀개", "addr": "강원특별자치도 춘천시 영서로 3282", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "http://tong.visitkorea.or.kr/cms/resource/12/3382612_image2_1.JPG", "busan": false, "homepage": ""}, {"lat": 35.6505242555, "lng": 128.2300981141, "title": "트리독스 반려견 전용 캠핑장", "addr": "경상북도 고령군 쌍림면 용당길 42-56", "tel": "", "type": "레포츠", "color": "#f59e0b", "icon": "fa-person-biking", "emoji": "🚴", "img": "http://tong.visitkorea.or.kr/cms/resource/95/2603795_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.7364332304084, "lng": 127.66201933849, "title": "강아지숲", "addr": "강원특별자치도 춘천시 남산면 충효로 437", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "https://tong.visitkorea.or.kr/cms/resource/84/3082584_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 35.65348283, "lng": 127.7971834592, "title": "지리산 애완곤충농원", "addr": "경상남도 함양군 안의면 용추계곡로 119-2", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "http://tong.visitkorea.or.kr/cms/resource/63/3342563_image2_1.JPG", "busan": false, "homepage": ""}, {"lat": 37.23788234270528, "lng": 127.61230031056711, "title": "반려마루", "addr": "경기도 여주시 명품1로 1-2 (상거동)", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "https://tong.visitkorea.or.kr/cms/resource/92/4039792_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.5160194328, "lng": 127.0333174582, "title": "반려문화", "addr": "서울특별시 강남구 언주로133길 23", "tel": "", "type": "음식점", "color": "#f97316", "icon": "fa-utensils", "emoji": "🍽", "img": "http://tong.visitkorea.or.kr/cms/resource/04/2779104_image2_1.jpeg", "busan": false, "homepage": ""}, {"lat": 35.1630791230641, "lng": 129.072147777982, "title": "부산 전포동 구상반려암", "addr": "부산광역시 부산진구 전포동", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "", "busan": true, "homepage": ""}, {"lat": 37.4781855533, "lng": 128.2729367936, "title": "도그밀리(DOGMILY)", "addr": "강원특별자치도 평창군 방림면 감동지길 100", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "http://tong.visitkorea.or.kr/cms/resource/92/2801592_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.8439526939, "lng": 127.7454237053, "title": "도그스테이블", "addr": "강원특별자치도 춘천시 안마산로 294-30", "tel": "", "type": "음식점", "color": "#f97316", "icon": "fa-utensils", "emoji": "🍽", "img": "http://tong.visitkorea.or.kr/cms/resource/94/2918994_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.7176978582783, "lng": 126.975036899963, "title": "도그스포지움 송추점", "addr": "경기도 양주시 호국로 542-20", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "", "busan": false, "homepage": ""}, {"lat": 38.0017435255, "lng": 128.2319275136, "title": "라이프위드도그", "addr": "강원특별자치도 인제군 인제읍 자작나무숲길 1112", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "http://tong.visitkorea.or.kr/cms/resource/46/2921246_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.5207260307, "lng": 127.7298401806, "title": "메리도그하우스", "addr": "경기도 양평군 청운면 가현길 440-1", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "", "busan": false, "homepage": ""}, {"lat": 34.8860518315, "lng": 127.9087632151, "title": "명도그오토캠핑장", "addr": "경상남도 남해군 설천면 설천로 176-187", "tel": "", "type": "레포츠", "color": "#f59e0b", "icon": "fa-person-biking", "emoji": "🚴", "img": "http://tong.visitkorea.or.kr/cms/resource/83/2727683_image2_1.JPG", "busan": false, "homepage": ""}, {"lat": 37.6672693362, "lng": 127.3841978587, "title": "무아레 도그라운드", "addr": "경기도 가평군 청평면 북한강로1636번길 25", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "http://tong.visitkorea.or.kr/cms/resource/32/3012032_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.408118, "lng": 126.634506, "title": "송도 도그파크", "addr": "인천광역시 연수구 센트럴로 350 (송도동)", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "", "busan": false, "homepage": ""}, {"lat": 35.6161191898, "lng": 128.8042041564, "title": "청도그린나래캠핑장", "addr": "경상북도 청도군 매전면 송원길 122-3", "tel": "", "type": "레포츠", "color": "#f59e0b", "icon": "fa-person-biking", "emoji": "🚴", "img": "http://tong.visitkorea.or.kr/cms/resource/01/2730801_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 35.336720263, "lng": 128.3560316281, "title": "한별도그파크", "addr": "경상남도 함안군 이묵골로 135", "tel": "", "type": "레포츠", "color": "#f59e0b", "icon": "fa-person-biking", "emoji": "🚴", "img": "http://tong.visitkorea.or.kr/cms/resource/75/2909775_image2_1.JPG", "busan": false, "homepage": ""}, {"lat": 37.8841680801, "lng": 127.7785778274, "title": "헤븐리파크도그스", "addr": "강원특별자치도 춘천시 동면 순환대로 1156-20", "tel": "", "type": "음식점", "color": "#f97316", "icon": "fa-utensils", "emoji": "🍽", "img": "http://tong.visitkorea.or.kr/cms/resource/91/2919991_image2_1.jpeg", "busan": false, "homepage": ""}, {"lat": 33.39087381270927, "lng": 126.36737929508537, "title": "구팔일 댕댕이 대잔치！", "addr": "제주특별자치도 제주시 애월읍 천덕로 880-24", "tel": "1833-9810", "type": "축제/행사", "color": "#ef4444", "icon": "fa-calendar", "emoji": "🎉", "img": "https://tong.visitkorea.or.kr/cms/resource/36/4063736_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.644442391981, "lng": 126.627251906863, "title": "미어캣인더시티", "addr": "경기도 김포시 김포한강9로76번길 41 (구래동)", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "https://tong.visitkorea.or.kr/cms/resource/62/4039562_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.58162110969318, "lng": 127.00280543786684, "title": "미어캣파크", "addr": "서울특별시 종로구 대학로10길 12 (동숭동)", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "https://tong.visitkorea.or.kr/cms/resource/91/3056591_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 37.7632752464, "lng": 128.8746155812, "title": "캣츠모텔", "addr": "강원특별자치도 강릉시 하슬라로 150 (교동)", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "", "busan": false, "homepage": ""}, {"lat": 37.5171899712591, "lng": 126.905567071705, "title": "프렌치캣 신세계백화점 타임스퀘어점", "addr": "서울특별시 영등포구 영중로 9 (영등포동4가)", "tel": "", "type": "쇼핑", "color": "#ec4899", "icon": "fa-bag-shopping", "emoji": "🛍", "img": "https://tong.visitkorea.or.kr/cms/resource/58/4018158_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 35.1538130576, "lng": 129.1185477876, "title": "광안리해수욕장", "addr": "부산광역시 수영구 광안해변로 219 (광안동)", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "http://tong.visitkorea.or.kr/cms/resource/45/3311245_image2_1.jpg", "busan": true, "homepage": ""}, {"lat": 34.8477429972, "lng": 128.4231637515, "title": "통영 세병관", "addr": "경상남도 통영시 세병로 27", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "http://tong.visitkorea.or.kr/cms/resource/66/3580566_image2_1.jpg", "busan": false, "homepage": ""}, {"lat": 35.0625336062, "lng": 129.0764900502, "title": "감지해변", "addr": "부산광역시 영도구 감지길 110", "tel": "", "type": "관광지", "color": "#10b981", "icon": "fa-tree", "emoji": "🌳", "img": "", "busan": true, "homepage": ""}, {"lat": 35.1609381479, "lng": 129.1665100882, "title": "해운대 영무파라드호텔", "addr": "부산광역시 해운대구 해운대해변로298번길 25 (중동)", "tel": "", "type": "숙박", "color": "#3b82f6", "icon": "fa-bed", "emoji": "🏨", "img": "http://tong.visitkorea.or.kr/cms/resource/20/2705420_image2_1.jpg", "busan": true, "homepage": "https://ymparade.kr/kor/index.do"}];
+
+var map = L.map('map',{zoomControl:false}).setView([36.5,127.8],7);
+L.control.zoom({position:'bottomleft'}).addTo(map);
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png',{
+  attribution:'&copy; <a href="https://carto.com">CARTO</a> &copy; <a href="https://osm.org">OSM</a>',
+  maxZoom:19
+}).addTo(map);
+
+var cluster = L.markerClusterGroup({
+  maxClusterRadius:50,
+  spiderfyOnMaxZoom:true,
+  showCoverageOnHover:false,
+  iconCreateFunction:function(c){
+    var n=c.getChildCount();
+    var sz=n<10?'small':n<30?'medium':'large';
+    return L.divIcon({
+      html:'<div style="background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;border:3px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.3)">'+n+'</div>',
+      iconSize:[40,40],className:''
+    });
+  }
+});
+
+var allMarkers=[];
+
+spots.forEach(function(s){
+  var cls='marker-icon'+(s.busan?' busan-marker':'');
+  var icon=L.divIcon({
+    html:'<div class="'+cls+'" style="background:'+s.color+'"><i class="fas '+s.icon+'"></i></div>',
+    iconSize:[36,36],iconAnchor:[18,18],popupAnchor:[0,-18],className:''
+  });
+
+  var imgHtml=s.img?'<img src="'+s.img+'" onerror="this.style.display=\'none\'">':'';
+  var busanTag=s.busan?'<span class="busan-tag">부산</span>':'';
+  var telHtml=s.tel?'<div class="tel">📞 '+s.tel+'</div>':'';
+  var linkHtml=s.homepage?'<a href="'+s.homepage+'" target="_blank" class="site-link">🔗 홈페이지 바로가기</a>':'';
+
+  var popup='<div class="popup-card">'
+    +imgHtml
+    +'<div class="body">'
+    +'<h3>'+s.emoji+' '+s.title+busanTag+'</h3>'
+    +'<span class="type-badge" style="background:'+s.color+'">'+s.type+'</span>'
+    +'<div class="addr">'+s.addr+'</div>'
+    +telHtml
+    +linkHtml
+    +'</div></div>';
+
+  var marker=L.marker([s.lat,s.lng],{icon:icon}).bindPopup(popup);
+  marker._petData=s;
+  cluster.addLayer(marker);
+  allMarkers.push(marker);
+});
+
+map.addLayer(cluster);
+
+function filterMarkers(){
+  var checks=document.querySelectorAll('.legend-item input');
+  var activeTypes=new Set();
+  checks.forEach(function(c){if(c.checked)activeTypes.add(c.dataset.type)});
+  var region=document.getElementById('regionFilter').value;
+
+  cluster.clearLayers();
+  allMarkers.forEach(function(m){
+    var d=m._petData;
+    var typeOk=activeTypes.has(d.type);
+    var regionOk=!region||d.addr.startsWith(region);
+    if(typeOk&&regionOk) cluster.addLayer(m);
+  });
+}
+
+document.querySelectorAll('.legend-item input').forEach(function(c){
+  c.addEventListener('change',filterMarkers);
+});
+document.getElementById('regionFilter').addEventListener('change',filterMarkers);
+
+function goToBusan(){
+  map.setView([35.15,129.05],12);
+  document.getElementById('regionFilter').value='부산광역시';
+  filterMarkers();
+}
+function goToAll(){
+  map.setView([36.5,127.8],7);
+  document.getElementById('regionFilter').value='';
+  filterMarkers();
+}
+</script>
+</body>
+</html>

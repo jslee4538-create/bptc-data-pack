@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>교토 2박3일 동선 지도</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; }
+  #map { width: 100%; height: 100vh; }
+  .legend {
+    background: white; padding: 14px 18px; border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.25); line-height: 2;
+    font-size: 13px; max-width: 260px;
+  }
+  .legend h4 { margin-bottom: 6px; font-size: 15px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; }
+  .legend-line { width: 30px; height: 4px; border-radius: 2px; }
+  .legend-marker { width: 14px; height: 14px; border-radius: 50%; border: 2px solid white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+  .custom-popup h3 { margin: 0 0 4px 0; font-size: 14px; }
+  .custom-popup p { margin: 0; font-size: 12px; color: #555; }
+  .custom-popup .tag {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 11px; color: white; margin-top: 4px;
+  }
+  .info-panel {
+    position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
+    background: rgba(46,64,87,0.92); color: white; padding: 10px 24px;
+    border-radius: 30px; font-size: 14px; font-weight: bold; z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+  .btn-group {
+    position: fixed; top: 55px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 6px; z-index: 1000;
+  }
+  .btn-day {
+    padding: 8px 18px; border: none; border-radius: 20px; cursor: pointer;
+    font-size: 13px; font-weight: bold; color: white; opacity: 0.9;
+    transition: all 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  .btn-day:hover { opacity: 1; transform: scale(1.05); }
+  .btn-day.active { opacity: 1; transform: scale(1.1); box-shadow: 0 3px 10px rgba(0,0,0,0.35); }
+  .btn-d1 { background: #048A81; }
+  .btn-d2 { background: #C45BAA; }
+  .btn-d3 { background: #E36414; }
+  .btn-all { background: #2E4057; }
+</style>
+</head>
+<body>
+
+<div class="info-panel">교토 2박3일 여행 동선</div>
+<div class="btn-group">
+  <button class="btn-day btn-all active" onclick="showAll()">전체</button>
+  <button class="btn-day btn-d1" onclick="showDay(1)">Day 1</button>
+  <button class="btn-day btn-d2" onclick="showDay(2)">Day 2</button>
+  <button class="btn-day btn-d3" onclick="showDay(3)">Day 3</button>
+</div>
+
+<div id="map"></div>
+
+<script>
+const map = L.map('map').setView([35.003, 135.762], 14);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap contributors',
+  maxZoom: 19
+}).addTo(map);
+
+const colors = { 1: '#048A81', 2: '#C45BAA', 3: '#E36414' };
+const dayLabels = { 1: 'Day 1', 2: 'Day 2', 3: 'Day 3' };
+
+const places = [
+  // Day 1
+  { day: 1, order: 1, name: '숙소 (카와라마치/카라스마)', detail: '체크인 / 짐 보관', cat: '숙소', lat: 35.00365, lng: 135.76835 },
+  { day: 1, order: 2, name: 'KAMOGAWA BAKERY', detail: '카모가와 강변 베이커리', cat: '맛집', lat: 35.0164, lng: 135.7728 },
+  { day: 1, order: 3, name: '오가키 서점 & 라운지', detail: '카라스마산조점', cat: '카페/서점', lat: 35.0085, lng: 135.7590 },
+  { day: 1, order: 4, name: '니시키 시장', detail: '교토의 부엌, 먹거리 탐방', cat: '관광/쇼핑', lat: 35.0050, lng: 135.7645 },
+  { day: 1, order: 5, name: 'SEIYU Sanjo Store', detail: '마트 쇼핑', cat: '쇼핑', lat: 35.0090, lng: 135.7510 },
+  { day: 1, order: 6, name: 'Reisen Don (레이센 돈)', detail: '덮밥 전문점', cat: '맛집', lat: 35.0155, lng: 135.7715 },
+  { day: 1, order: 7, name: '카모가와 강변 산책', detail: '야경 감상', cat: '산책', lat: 35.0070, lng: 135.7710 },
+
+  // Day 2
+  { day: 2, order: 1, name: '기요미즈데라', detail: '세계문화유산', cat: '관광', lat: 34.9948, lng: 135.7850 },
+  { day: 2, order: 2, name: '니넨자카 · 산넨자카', detail: '전통 거리 산책', cat: '관광', lat: 34.9968, lng: 135.7808 },
+  { day: 2, order: 3, name: 'DARUMA BURGER', detail: '교토식 수제버거', cat: '맛집', lat: 35.0030, lng: 135.7760 },
+  { day: 2, order: 4, name: '야사카 신사 / 기온', detail: '마이코 거리, 하나미코지', cat: '관광', lat: 35.0036, lng: 135.7785 },
+  { day: 2, order: 5, name: '쇼군즈카 청룡전 대무대', detail: '교토 시내 파노라마 전망', cat: '관광', lat: 34.9975, lng: 135.7905 },
+  { day: 2, order: 6, name: '난젠지 · 남선사', detail: '수로각, 정원', cat: '관광', lat: 35.0113, lng: 135.7932 },
+  { day: 2, order: 7, name: '기온/카와라마치 저녁식사', detail: '교토 전통 요리', cat: '맛집', lat: 35.0040, lng: 135.7710 },
+  { day: 2, order: 8, name: '마루키 베이커리', detail: '인기 빵집', cat: '맛집', lat: 34.9960, lng: 135.7620 },
+
+  // Day 3
+  { day: 3, order: 1, name: '교토 철도 박물관', detail: 'Kyoto Railway Museum', cat: '관광', lat: 34.9876, lng: 135.7463 },
+  { day: 3, order: 2, name: '이온몰 교토 고조', detail: '쇼핑 + 푸드코트', cat: '쇼핑', lat: 34.9930, lng: 135.7470 },
+  { day: 3, order: 3, name: '니조성', detail: '여유 산책', cat: '관광', lat: 35.0142, lng: 135.7482 },
+  { day: 3, order: 4, name: '교토역', detail: '출발', cat: '이동', lat: 34.9856, lng: 135.7588 },
+];
+
+function createIcon(day, order) {
+  return L.divIcon({
+    className: 'custom-marker',
+    html: `<div style="
+      background:${colors[day]}; color:white; width:28px; height:28px;
+      border-radius:50%; display:flex; align-items:center; justify-content:center;
+      font-weight:bold; font-size:13px; border:3px solid white;
+      box-shadow:0 2px 6px rgba(0,0,0,0.35);
+    ">${order}</div>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+    popupAnchor: [0, -16]
+  });
+}
+
+// 숙소 아이콘 (별 모양)
+function createHotelIcon() {
+  return L.divIcon({
+    className: 'custom-marker',
+    html: `<div style="
+      background:#FFD700; color:#333; width:32px; height:32px;
+      border-radius:50%; display:flex; align-items:center; justify-content:center;
+      font-size:18px; border:3px solid white;
+      box-shadow:0 2px 8px rgba(0,0,0,0.4);
+    ">★</div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -18]
+  });
+}
+
+const markers = [];
+const polylines = [];
+
+// 마커 생성
+places.forEach(p => {
+  const icon = (p.cat === '숙소') ? createHotelIcon() : createIcon(p.day, p.order);
+  const marker = L.marker([p.lat, p.lng], { icon: icon })
+    .bindPopup(`
+      <div class="custom-popup">
+        <h3>${p.name}</h3>
+        <p>${p.detail}</p>
+        <span class="tag" style="background:${colors[p.day]}">${dayLabels[p.day]} - ${p.order}번째</span>
+        <span class="tag" style="background:#666">${p.cat}</span>
+      </div>
+    `);
+  marker._day = p.day;
+  marker.addTo(map);
+  markers.push(marker);
+});
+
+// 동선 라인 생성
+[1, 2, 3].forEach(day => {
+  const dayPlaces = places.filter(p => p.day === day).sort((a, b) => a.order - b.order);
+  const coords = dayPlaces.map(p => [p.lat, p.lng]);
+
+  // 테두리 라인 (흰색)
+  const bgLine = L.polyline(coords, {
+    color: 'white', weight: 7, opacity: 0.8, lineJoin: 'round'
+  });
+  bgLine._day = day;
+  bgLine.addTo(map);
+  polylines.push(bgLine);
+
+  // 메인 라인
+  const line = L.polyline(coords, {
+    color: colors[day], weight: 4, opacity: 0.9,
+    dashArray: '12, 8', lineJoin: 'round'
+  });
+  line._day = day;
+  line.addTo(map);
+  polylines.push(line);
+});
+
+// 범례
+const legend = L.control({ position: 'bottomright' });
+legend.onAdd = function() {
+  const div = L.DomUtil.create('div', 'legend');
+  div.innerHTML = `
+    <h4>범례</h4>
+    <div class="legend-item"><div class="legend-marker" style="background:#FFD700"></div> 숙소</div>
+    <div class="legend-item"><div class="legend-line" style="background:${colors[1]}"></div> Day 1 중심가</div>
+    <div class="legend-item"><div class="legend-line" style="background:${colors[2]}"></div> Day 2 히가시야마</div>
+    <div class="legend-item"><div class="legend-line" style="background:${colors[3]}"></div> Day 3 서쪽/출발</div>
+  `;
+  return div;
+};
+legend.addTo(map);
+
+// 필터 기능
+function showAll() {
+  markers.forEach(m => m.addTo(map));
+  polylines.forEach(l => l.addTo(map));
+  map.setView([35.003, 135.762], 14);
+  updateButtons('all');
+}
+
+function showDay(day) {
+  markers.forEach(m => { map.removeLayer(m); if (m._day === day) m.addTo(map); });
+  polylines.forEach(l => { map.removeLayer(l); if (l._day === day) l.addTo(map); });
+
+  const dayPlaces = places.filter(p => p.day === day);
+  const group = L.featureGroup(markers.filter(m => m._day === day));
+  map.fitBounds(group.getBounds().pad(0.15));
+  updateButtons(day);
+}
+
+function updateButtons(active) {
+  document.querySelectorAll('.btn-day').forEach(b => b.classList.remove('active'));
+  if (active === 'all') document.querySelector('.btn-all').classList.add('active');
+  else document.querySelector('.btn-d' + active).classList.add('active');
+}
+</script>
+</body>
+</html>
