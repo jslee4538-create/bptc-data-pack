@@ -1,0 +1,116 @@
+{
+  "App": {
+    "title": "교토 여가 가이드",
+    "subtitle": "Kyoto Guide"
+  },
+  "Nav": {
+    "home": "홈",
+    "places": "명소",
+    "events": "캘린더",
+    "bus": "교통",
+    "me": "마이"
+  },
+  "Common": {
+    "search": "검색",
+    "searchPlaceholder": "장소, 행사, 태그로 검색",
+    "all": "전체",
+    "loading": "로딩 중…",
+    "loadingMap": "지도 로딩 중…",
+    "login": "Google 로그인",
+    "logout": "로그아웃",
+    "viewAll": "전체보기",
+    "back": "뒤로",
+    "more": "더보기",
+    "delete": "삭제",
+    "cancel": "취소",
+    "save": "저장",
+    "create": "만들기",
+    "viewOnMap": "지도에서 크게 보기",
+    "noResult": "결과가 없어요"
+  },
+  "Home": {
+    "heroBadge": "KYOTO 2026",
+    "heroTitle": "교토에서의 한 학기,\n더 알차게 채워봐요",
+    "heroSub": "사계절 행사 · 숨은 명소 · 버스 노선까지 한 번에",
+    "categories": "카테고리",
+    "upcomingEvents": "다가오는 행사",
+    "featuredPlaces": "추천 명소",
+    "noPlaces": "장소 데이터가 아직 준비되지 않았어요",
+    "noEvents": "아직 등록된 다가오는 행사가 없어요"
+  },
+  "Places": {
+    "title": "관광지 & 맛집",
+    "subtitle": "교토의 모든 장소",
+    "count": "{n}개",
+    "address": "주소",
+    "openingHours": "운영시간",
+    "priceRange": "가격대",
+    "bookmark": "즐겨찾기 추가",
+    "bookmarked": "즐겨찾기에 저장됨",
+    "loginToBookmark": "로그인하고 즐겨찾기 저장",
+    "addToCourse": "코스에 담기",
+    "map": "지도",
+    "relatedEvents": "이곳에서 열리는 행사",
+    "nearbyBus": "가까운 버스 정류장",
+    "walkAbout": "도보 약 {distance}",
+    "straightLineHint": "💡 직선 거리 기준이며 실제 도보 경로와 다를 수 있어요"
+  },
+  "Events": {
+    "title": "계절 행사 캘린더",
+    "subtitle": "교토의 사계절을 만나는 {n}개의 축제",
+    "noEvents": "이 계절의 행사가 없어요",
+    "month": "{year}년 {month}월"
+  },
+  "Bus": {
+    "title": "버스 노선 & 지도",
+    "subtitle": "교토 시내 주요 {routes}개 노선 · {stops}개 정류장",
+    "searchPlaceholder": "노선 번호 또는 경유지 검색",
+    "routeList": "노선 목록 ({n})",
+    "showAllStops": "← 전체 정류장 보기",
+    "noResult": "검색 결과가 없어요",
+    "passingRoutes": "경유 노선"
+  },
+  "Me": {
+    "title": "마이페이지",
+    "loginPromptTitle": "로그인하고 나만의 가이드를 만들어보세요",
+    "loginPromptBody": "즐겨찾기와 코스가 계정에 저장돼요.",
+    "bookmarks": "즐겨찾기",
+    "courses": "내 코스"
+  },
+  "Bookmarks": {
+    "title": "내 즐겨찾기",
+    "subtitle": "저장한 장소 {places}개 · 행사 {events}개",
+    "loginTitle": "로그인하고 마음에 드는 장소를 저장하세요",
+    "loginBody": "Google 계정으로 1초만에 로그인할 수 있어요.\n오른쪽 상단의 로그인 버튼을 눌러주세요.",
+    "empty": "아직 저장한 항목이 없어요.\n마음에 드는 장소나 행사의 하트를 눌러보세요.",
+    "savedPlaces": "저장한 장소",
+    "savedEvents": "저장한 행사"
+  },
+  "Courses": {
+    "title": "내 코스",
+    "subtitle": "{n}개의 일정",
+    "newButton": "새 코스",
+    "loginTitle": "로그인하고 나만의 코스를 만들어보세요",
+    "loginBody": "하루 일정에 가고 싶은 장소를 순서대로 묶을 수 있어요.",
+    "empty": "아직 만든 코스가 없어요.",
+    "firstCreate": "첫 코스 만들기 →",
+    "newCourseTitle": "새 코스 만들기",
+    "newCourseSub": "하루 일정에 묶을 장소를 다음 단계에서 추가할 수 있어요",
+    "nameLabel": "코스 이름 *",
+    "namePlaceholder": "예: 청수사 → 기온 야경 코스",
+    "memoLabel": "메모 (선택)",
+    "memoPlaceholder": "언제 가는 코스인지, 누구와 가는지 등",
+    "addHint": "💡 장소 상세에서 '이 코스에 담기'를 눌러 추가할 수 있어요",
+    "deleteButton": "이 코스 삭제",
+    "placesCount": "{n} 장소"
+  },
+  "Search": {
+    "title": "검색",
+    "subtitle": "장소명 · 일본어 · 주소 · 태그 · 행사 제목까지 한 번에",
+    "popular": "인기 검색어",
+    "noResults": "에 대한 결과가 없어요",
+    "totalResult": "{total}개 결과 · 장소 {places} / 행사 {events}",
+    "places": "장소",
+    "events": "행사"
+  }
+}

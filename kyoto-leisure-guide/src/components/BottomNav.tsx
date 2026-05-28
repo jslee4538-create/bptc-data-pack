@@ -2,18 +2,20 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Home, MapPin, Calendar, Bus, User } from "lucide-react";
 
 export default function BottomNav() {
+  const t = useTranslations("Nav");
   const pathname = usePathname();
 
   const navItems = [
-    { name: "홈", path: "/", icon: Home },
-    { name: "명소", path: "/places", icon: MapPin },
-    { name: "캘린더", path: "/events", icon: Calendar },
-    { name: "교통", path: "/bus", icon: Bus },
-    { name: "마이", path: "/me", icon: User },
-  ];
+    { key: "home", path: "/", icon: Home },
+    { key: "places", path: "/places", icon: MapPin },
+    { key: "events", path: "/events", icon: Calendar },
+    { key: "bus", path: "/bus", icon: Bus },
+    { key: "me", path: "/me", icon: User },
+  ] as const;
 
   return (
     <nav className="sticky bottom-0 left-0 right-0 z-40 w-full bg-white/70 dark:bg-zinc-950/70 backdrop-blur-lg border-t border-zinc-200/30 dark:border-zinc-800/30 px-6 py-2 pb-safe-bottom">
@@ -44,7 +46,7 @@ export default function BottomNav() {
                     : "text-zinc-500 dark:text-zinc-400"
                 }`}
               >
-                {item.name}
+                {t(item.key)}
               </span>
               {isActive && (
                 <span className="absolute -top-1 w-1 h-1 rounded-full bg-rose-500 animate-pulse" />

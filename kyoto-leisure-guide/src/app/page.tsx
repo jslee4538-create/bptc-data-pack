@@ -1,14 +1,17 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import PlaceCard from "@/components/PlaceCard";
 import EventCard from "@/components/EventCard";
 import type { Category, Event, Place } from "@/types/database";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const supabase = await createClient();
+  const t = await getTranslations("Home");
+  const tCommon = await getTranslations("Common");
 
   const today = new Date().toISOString().slice(0, 10);
 
@@ -39,22 +42,19 @@ export default async function Home() {
           <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-white/10 blur-2xl" />
           <div className="relative">
             <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-full">
-              <Sparkles size={10} /> KYOTO 2026
+              <Sparkles size={10} /> {t("heroBadge")}
             </span>
-            <h2 className="mt-2 text-xl font-extrabold leading-tight">
-              교토에서의 한 학기,
-              <br />더 알차게 채워봐요
+            <h2 className="mt-2 text-xl font-extrabold leading-tight whitespace-pre-line">
+              {t("heroTitle")}
             </h2>
-            <p className="mt-1 text-xs text-white/85">
-              사계절 행사 · 숨은 명소 · 버스 노선까지 한 번에
-            </p>
+            <p className="mt-1 text-xs text-white/85">{t("heroSub")}</p>
           </div>
         </div>
       </section>
 
       {/* Categories */}
       <section className="px-4">
-        <SectionHeading title="카테고리" href="/places" />
+        <SectionHeading title={t("categories")} href="/places" viewAll={tCommon("viewAll")} />
         <div className="grid grid-cols-4 gap-2">
           {cats.slice(0, 8).map((cat) => (
             <Link
@@ -73,10 +73,10 @@ export default async function Home() {
 
       {/* Upcoming events */}
       <section className="px-4">
-        <SectionHeading title="다가오는 행사" href="/events" />
+        <SectionHeading title={t("upcomingEvents")} href="/events" viewAll={tCommon("viewAll")} />
         <div className="grid grid-cols-1 gap-3">
           {upcoming.length === 0 ? (
-            <EmptyHint message="아직 등록된 다가오는 행사가 없어요" />
+            <EmptyHint message={t("noEvents")} />
           ) : (
             upcoming.map((event) => <EventCard key={event.id} event={event} compact />)
           )}
@@ -85,10 +85,10 @@ export default async function Home() {
 
       {/* Featured places */}
       <section className="px-4">
-        <SectionHeading title="추천 명소" href="/places" />
+        <SectionHeading title={t("featuredPlaces")} href="/places" viewAll={tCommon("viewAll")} />
         <div className="grid grid-cols-2 gap-3">
           {featured.length === 0 ? (
-            <EmptyHint message="장소 데이터가 아직 준비되지 않았어요" />
+            <EmptyHint message={t("noPlaces")} />
           ) : (
             featured.map((place) => <PlaceCard key={place.id} place={place} />)
           )}
@@ -98,7 +98,15 @@ export default async function Home() {
   );
 }
 
-function SectionHeading({ title, href }: { title: string; href: string }) {
+function SectionHeading({
+  title,
+  href,
+  viewAll,
+}: {
+  title: string;
+  href: string;
+  viewAll: string;
+}) {
   return (
     <div className="flex items-center justify-between mb-3">
       <h2 className="text-sm font-extrabold text-zinc-900 dark:text-zinc-50">{title}</h2>
@@ -106,7 +114,7 @@ function SectionHeading({ title, href }: { title: string; href: string }) {
         href={href}
         className="text-[10px] font-bold text-rose-500 flex items-center gap-0.5 hover:text-rose-600"
       >
-        전체보기 <ArrowRight size={10} />
+        {viewAll} <ArrowRight size={10} />
       </Link>
     </div>
   );

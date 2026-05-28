@@ -1,0 +1,116 @@
+{
+  "App": {
+    "title": "Kyoto Leisure Guide",
+    "subtitle": "Kyoto Guide"
+  },
+  "Nav": {
+    "home": "Home",
+    "places": "Places",
+    "events": "Events",
+    "bus": "Bus",
+    "me": "Me"
+  },
+  "Common": {
+    "search": "Search",
+    "searchPlaceholder": "Search places, events, tags",
+    "all": "All",
+    "loading": "Loading…",
+    "loadingMap": "Loading map…",
+    "login": "Sign in with Google",
+    "logout": "Sign out",
+    "viewAll": "View all",
+    "back": "Back",
+    "more": "More",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "save": "Save",
+    "create": "Create",
+    "viewOnMap": "View on OpenStreetMap",
+    "noResult": "No results"
+  },
+  "Home": {
+    "heroBadge": "KYOTO 2026",
+    "heroTitle": "Make every weekend\nin Kyoto count",
+    "heroSub": "Seasonal events · hidden gems · bus routes — all in one",
+    "categories": "Categories",
+    "upcomingEvents": "Upcoming events",
+    "featuredPlaces": "Featured places",
+    "noPlaces": "No place data yet",
+    "noEvents": "No upcoming events yet"
+  },
+  "Places": {
+    "title": "Sights & Eats",
+    "subtitle": "All places in Kyoto",
+    "count": "{n} items",
+    "address": "Address",
+    "openingHours": "Hours",
+    "priceRange": "Price",
+    "bookmark": "Add to bookmarks",
+    "bookmarked": "Bookmarked",
+    "loginToBookmark": "Sign in to bookmark",
+    "addToCourse": "Add to a course",
+    "map": "Map",
+    "relatedEvents": "Events at this place",
+    "nearbyBus": "Nearby bus stops",
+    "walkAbout": "{distance} walk",
+    "straightLineHint": "💡 Distances are straight-line and may differ from walking routes"
+  },
+  "Events": {
+    "title": "Seasonal Events",
+    "subtitle": "{n} festivals across Kyoto's four seasons",
+    "noEvents": "No events for this season",
+    "month": "{year} / {month}"
+  },
+  "Bus": {
+    "title": "Bus Routes & Map",
+    "subtitle": "{routes} main routes · {stops} stops in Kyoto",
+    "searchPlaceholder": "Search by route number or stop",
+    "routeList": "Routes ({n})",
+    "showAllStops": "← Show all stops",
+    "noResult": "No matching routes",
+    "passingRoutes": "Passing routes"
+  },
+  "Me": {
+    "title": "My Page",
+    "loginPromptTitle": "Sign in to build your own guide",
+    "loginPromptBody": "Your bookmarks and courses are saved to your account.",
+    "bookmarks": "Bookmarks",
+    "courses": "My Courses"
+  },
+  "Bookmarks": {
+    "title": "My Bookmarks",
+    "subtitle": "{places} saved places · {events} events",
+    "loginTitle": "Sign in to bookmark your favorite places",
+    "loginBody": "Sign in with Google in a second.\nTap the button in the top right.",
+    "empty": "Nothing saved yet.\nTap the heart on places or events you love.",
+    "savedPlaces": "Saved places",
+    "savedEvents": "Saved events"
+  },
+  "Courses": {
+    "title": "My Courses",
+    "subtitle": "{n} itineraries",
+    "newButton": "New course",
+    "loginTitle": "Sign in to build your own course",
+    "loginBody": "Group the places you want to visit into a day plan.",
+    "empty": "No courses yet.",
+    "firstCreate": "Create your first course →",
+    "newCourseTitle": "New course",
+    "newCourseSub": "Add places to this course on the next step",
+    "nameLabel": "Course name *",
+    "namePlaceholder": "e.g., Kiyomizu → Gion night course",
+    "memoLabel": "Memo (optional)",
+    "memoPlaceholder": "When, who with, any notes",
+    "addHint": "💡 Tap 'Add to a course' on a place detail to include it",
+    "deleteButton": "Delete this course",
+    "placesCount": "{n} places"
+  },
+  "Search": {
+    "title": "Search",
+    "subtitle": "Place names · Japanese · address · tags · event titles",
+    "popular": "Popular searches",
+    "noResults": "No results for",
+    "totalResult": "{total} results · {places} places / {events} events",
+    "places": "Places",
+    "events": "Events"
+  }
+}

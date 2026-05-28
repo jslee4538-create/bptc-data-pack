@@ -1,0 +1,116 @@
+{
+  "App": {
+    "title": "京都レジャーガイド",
+    "subtitle": "Kyoto Guide"
+  },
+  "Nav": {
+    "home": "ホーム",
+    "places": "観光地",
+    "events": "イベント",
+    "bus": "バス",
+    "me": "マイ"
+  },
+  "Common": {
+    "search": "検索",
+    "searchPlaceholder": "場所・イベント・タグで検索",
+    "all": "すべて",
+    "loading": "読み込み中…",
+    "loadingMap": "地図を読み込み中…",
+    "login": "Googleでログイン",
+    "logout": "ログアウト",
+    "viewAll": "すべて見る",
+    "back": "戻る",
+    "more": "もっと見る",
+    "delete": "削除",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "create": "作成",
+    "viewOnMap": "OpenStreetMapで開く",
+    "noResult": "結果がありません"
+  },
+  "Home": {
+    "heroBadge": "KYOTO 2026",
+    "heroTitle": "京都での留学期間を\nもっと充実させよう",
+    "heroSub": "四季のイベント・隠れた名所・バス路線をひとつに",
+    "categories": "カテゴリ",
+    "upcomingEvents": "近日開催のイベント",
+    "featuredPlaces": "おすすめの場所",
+    "noPlaces": "場所データはまだ準備中です",
+    "noEvents": "登録されたイベントはまだありません"
+  },
+  "Places": {
+    "title": "観光地・グルメ",
+    "subtitle": "京都の全スポット",
+    "count": "{n}件",
+    "address": "住所",
+    "openingHours": "営業時間",
+    "priceRange": "価格帯",
+    "bookmark": "お気に入りに追加",
+    "bookmarked": "保存済み",
+    "loginToBookmark": "ログインしてお気に入りに保存",
+    "addToCourse": "コースに追加",
+    "map": "地図",
+    "relatedEvents": "ここで開催されるイベント",
+    "nearbyBus": "近くのバス停",
+    "walkAbout": "徒歩約{distance}",
+    "straightLineHint": "💡 直線距離のため、実際の徒歩経路とは異なる場合があります"
+  },
+  "Events": {
+    "title": "季節のイベントカレンダー",
+    "subtitle": "京都の四季を彩る{n}のお祭り",
+    "noEvents": "この季節のイベントはありません",
+    "month": "{year}年{month}月"
+  },
+  "Bus": {
+    "title": "バス路線・地図",
+    "subtitle": "京都市内の主要{routes}路線・{stops}バス停",
+    "searchPlaceholder": "路線番号または経由地で検索",
+    "routeList": "路線一覧 ({n})",
+    "showAllStops": "← すべてのバス停を表示",
+    "noResult": "該当する路線がありません",
+    "passingRoutes": "経由路線"
+  },
+  "Me": {
+    "title": "マイページ",
+    "loginPromptTitle": "ログインして自分だけのガイドを作ろう",
+    "loginPromptBody": "お気に入りとコースがアカウントに保存されます。",
+    "bookmarks": "お気に入り",
+    "courses": "マイコース"
+  },
+  "Bookmarks": {
+    "title": "お気に入り",
+    "subtitle": "保存した場所 {places}件・イベント {events}件",
+    "loginTitle": "ログインしてお気に入りを保存",
+    "loginBody": "Googleアカウントで1秒でログインできます。\n右上のログインボタンを押してください。",
+    "empty": "まだ保存した項目がありません。\n気に入った場所やイベントのハートを押してみてください。",
+    "savedPlaces": "保存した場所",
+    "savedEvents": "保存したイベント"
+  },
+  "Courses": {
+    "title": "マイコース",
+    "subtitle": "{n}件のプラン",
+    "newButton": "新規コース",
+    "loginTitle": "ログインしてオリジナルコースを作ろう",
+    "loginBody": "一日のプランに行きたい場所を順番に並べられます。",
+    "empty": "まだ作成したコースはありません。",
+    "firstCreate": "最初のコースを作る →",
+    "newCourseTitle": "新しいコースを作る",
+    "newCourseSub": "次のステップで場所を追加できます",
+    "nameLabel": "コース名 *",
+    "namePlaceholder": "例: 清水寺 → 祇園 夜景コース",
+    "memoLabel": "メモ (任意)",
+    "memoPlaceholder": "いつ行くか、誰と行くかなど",
+    "addHint": "💡 場所詳細から「このコースに追加」をタップして追加できます",
+    "deleteButton": "このコースを削除",
+    "placesCount": "{n}箇所"
+  },
+  "Search": {
+    "title": "検索",
+    "subtitle": "場所名・日本語・住所・タグ・イベント名を一度に検索",
+    "popular": "人気検索",
+    "noResults": "の検索結果はありません",
+    "totalResult": "{total}件の結果・場所 {places}件 / イベント {events}件",
+    "places": "場所",
+    "events": "イベント"
+  }
+}
