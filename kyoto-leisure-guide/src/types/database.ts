@@ -57,6 +57,25 @@ export interface Bookmark {
   created_at: string;
 }
 
+export interface Course {
+  id: string;
+  user_id: string;
+  title: string;
+  description: string | null;
+  created_at: string;
+  items?: CourseItem[];
+}
+
+export interface CourseItem {
+  id: string;
+  course_id: string;
+  place_id: string;
+  position: number;
+  memo: string | null;
+  created_at: string;
+  place?: Place;
+}
+
 export const SEASON_LABELS: Record<string, string> = {
   spring: "봄 🌸",
   summer: "여름 🌻",

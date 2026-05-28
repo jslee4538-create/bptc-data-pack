@@ -2,8 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Clock, MapPin } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import AddToCourseButton from "@/components/AddToCourseButton";
 import BookmarkButton from "@/components/BookmarkButton";
 import EventCard from "@/components/EventCard";
+import NearbyBusSection from "@/components/NearbyBusSection";
 import type { Category, Event, Place } from "@/types/database";
 import { formatPriceRange, gradientFor } from "@/lib/utils";
 
@@ -143,10 +145,14 @@ export default async function PlaceDetailPage({ params }: { params: Params }) {
         </a>
       </section>
 
-      {/* Bookmark */}
-      <section className="px-4">
+      {/* Bookmark + Course */}
+      <section className="px-4 flex flex-col gap-2">
         <BookmarkButton targetType="place" targetId={typedPlace.id} />
+        <AddToCourseButton placeId={typedPlace.id} />
       </section>
+
+      {/* Nearby buses */}
+      <NearbyBusSection lat={typedPlace.lat} lng={typedPlace.lng} />
 
       {/* Related events */}
       {events.length > 0 && (

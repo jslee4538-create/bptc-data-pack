@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, MapPin, Calendar, Bus, Heart } from "lucide-react";
+import { Home, MapPin, Calendar, Bus, User } from "lucide-react";
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -12,7 +12,7 @@ export default function BottomNav() {
     { name: "명소", path: "/places", icon: MapPin },
     { name: "캘린더", path: "/events", icon: Calendar },
     { name: "교통", path: "/bus", icon: Bus },
-    { name: "북마크", path: "/bookmarks", icon: Heart },
+    { name: "마이", path: "/me", icon: User },
   ];
 
   return (

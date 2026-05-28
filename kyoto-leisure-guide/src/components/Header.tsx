@@ -1,8 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { LogIn, LogOut, Sparkles, User } from "lucide-react";
+import { LogIn, LogOut, Search, Sparkles, User } from "lucide-react";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 export default function Header() {
@@ -69,7 +70,14 @@ export default function Header() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <Link
+            href="/search"
+            aria-label="검색"
+            className="p-1.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 hover:text-rose-500 transition-colors"
+          >
+            <Search size={16} />
+          </Link>
           {loading ? (
             <div className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 animate-pulse" />
           ) : user ? (
