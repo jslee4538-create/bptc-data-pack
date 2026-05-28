@@ -13,3 +13,9 @@
 
 # OMC 잡파일
 .omc/
+
+# Claude Code 로컬 상태
+.claude/
+
+# Next.js 앱의 node_modules (kyoto-leisure-guide/node_modules)
+**/node_modules/
