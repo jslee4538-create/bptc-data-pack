@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Heart, LogIn, Route } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import EventNotifications from "@/components/EventNotifications";
+import RecommendButton from "@/components/RecommendButton";
 
 export const dynamic = "force-dynamic";
 
@@ -75,6 +76,8 @@ export default async function MePage() {
           </div>
         </Link>
       </div>
+
+      <RecommendButton />
 
       <EventNotifications />
     </div>
