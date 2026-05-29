@@ -5,6 +5,7 @@ import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
+import PWARegister from "@/components/PWARegister";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,7 +22,16 @@ export const metadata: Metadata = {
   description: "교토 교환학생을 위한 최고의 여가 명소, 맛집, 축제 캘린더 및 버스 동선 가이드",
   manifest: "/manifest.json",
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: "/icon.svg",
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Kyoto Guide",
+    statusBarStyle: "default",
   },
 };
 
@@ -70,6 +80,7 @@ export default async function RootLayout({
             {/* App Bottom Navigation */}
             <BottomNav />
           </div>
+          <PWARegister />
         </NextIntlClientProvider>
       </body>
     </html>

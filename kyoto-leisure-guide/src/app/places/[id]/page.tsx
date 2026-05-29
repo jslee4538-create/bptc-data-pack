@@ -6,6 +6,7 @@ import AddToCourseButton from "@/components/AddToCourseButton";
 import BookmarkButton from "@/components/BookmarkButton";
 import EventCard from "@/components/EventCard";
 import NearbyBusSection from "@/components/NearbyBusSection";
+import ReviewSection from "@/components/ReviewSection";
 import type { Category, Event, Place } from "@/types/database";
 import { formatPriceRange, gradientFor } from "@/lib/utils";
 
@@ -153,6 +154,9 @@ export default async function PlaceDetailPage({ params }: { params: Params }) {
 
       {/* Nearby buses */}
       <NearbyBusSection lat={typedPlace.lat} lng={typedPlace.lng} />
+
+      {/* Reviews */}
+      <ReviewSection placeId={typedPlace.id} />
 
       {/* Related events */}
       {events.length > 0 && (

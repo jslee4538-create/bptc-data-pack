@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f43f5e"/>
+      <stop offset="100%" stop-color="#fb923c"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="42" fill="url(#g)"/>
+  <g fill="#fff">
+    <path d="M48 132 V60 L96 92 L144 60 V132" stroke="#fff" stroke-width="14" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="96" cy="96" r="6"/>
+  </g>
+  <text x="96" y="166" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="800" font-size="22" fill="#fff" letter-spacing="2">KYOTO</text>
+</svg>
