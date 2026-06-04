@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { CalendarPlus, ExternalLink } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { GOOGLE_OAUTH_OPTIONS, callbackUrl } from "@/lib/auth";
+import { GOOGLE_CALENDAR_OAUTH_OPTIONS, callbackUrl } from "@/lib/auth";
 
 type Props = {
   title: string;
@@ -39,7 +39,7 @@ export default function AddToCalendarButton({
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        ...GOOGLE_OAUTH_OPTIONS,
+        ...GOOGLE_CALENDAR_OAUTH_OPTIONS,
         redirectTo: callbackUrl(
           window.location.origin,
           window.location.pathname

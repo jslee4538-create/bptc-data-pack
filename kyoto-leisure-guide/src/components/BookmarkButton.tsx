@@ -3,7 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 import { Heart, LogIn } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { GOOGLE_OAUTH_OPTIONS, callbackUrl } from "@/lib/auth";
+import { callbackUrl } from "@/lib/auth";
 import type { User } from "@supabase/supabase-js";
 
 type Props = {
@@ -53,7 +53,6 @@ export default function BookmarkButton({ targetType, targetId, variant = "full" 
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        ...GOOGLE_OAUTH_OPTIONS,
         redirectTo: callbackUrl(window.location.origin, window.location.pathname),
       },
     });
