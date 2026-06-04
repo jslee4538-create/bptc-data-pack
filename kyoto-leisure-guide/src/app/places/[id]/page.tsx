@@ -35,11 +35,22 @@ export default async function PlaceDetailPage({ params }: { params: Params }) {
     .order("start_date");
 
   const events = (relatedEvents ?? []) as Event[];
-  const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${
-    typedPlace.lng - 0.005
-  }%2C${typedPlace.lat - 0.003}%2C${typedPlace.lng + 0.005}%2C${
-    typedPlace.lat + 0.003
-  }&layer=mapnik&marker=${typedPlace.lat}%2C${typedPlace.lng}`;
+
+  const googleKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const useGoogleMap = Boolean(googleKey);
+  const mapSrc = useGoogleMap
+    ? `https://www.google.com/maps/embed/v1/place?key=${googleKey}&q=${typedPlace.lat},${typedPlace.lng}&zoom=16`
+    : `https://www.openstreetmap.org/export/embed.html?bbox=${
+        typedPlace.lng - 0.005
+      }%2C${typedPlace.lat - 0.003}%2C${typedPlace.lng + 0.005}%2C${
+        typedPlace.lat + 0.003
+      }&layer=mapnik&marker=${typedPlace.lat}%2C${typedPlace.lng}`;
+  const externalMapUrl = useGoogleMap
+    ? `https://www.google.com/maps/search/?api=1&query=${typedPlace.lat},${typedPlace.lng}`
+    : `https://www.openstreetmap.org/?mlat=${typedPlace.lat}&mlon=${typedPlace.lng}#map=17/${typedPlace.lat}/${typedPlace.lng}`;
+  const externalMapLabel = useGoogleMap
+    ? "Google 지도에서 크게 보기 →"
+    : "OpenStreetMap에서 크게 보기 →";
 
   return (
     <div className="flex flex-col gap-4 pb-6">
@@ -137,12 +148,12 @@ export default async function PlaceDetailPage({ params }: { params: Params }) {
           />
         </div>
         <a
-          href={`https://www.openstreetmap.org/?mlat=${typedPlace.lat}&mlon=${typedPlace.lng}#map=17/${typedPlace.lat}/${typedPlace.lng}`}
+          href={externalMapUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="block mt-2 text-[10px] text-rose-500 text-right hover:underline"
         >
-          OpenStreetMap에서 크게 보기 →
+          {externalMapLabel}
         </a>
       </section>
 
