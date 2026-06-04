@@ -16,6 +16,7 @@ export interface Place {
   price_range: number | null;
   opening_hours: string | null;
   image_url: string | null;
+  website_url: string | null;
   tags: string[];
   created_at: string;
   category?: Category;

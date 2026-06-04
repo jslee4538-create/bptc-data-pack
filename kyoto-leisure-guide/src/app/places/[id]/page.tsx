@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Clock, MapPin } from "lucide-react";
+import { ArrowLeft, Clock, ExternalLink, Globe, MapPin } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import AddToCourseButton from "@/components/AddToCourseButton";
 import BookmarkButton from "@/components/BookmarkButton";
@@ -120,6 +120,7 @@ export default async function PlaceDetailPage({ params }: { params: Params }) {
             label="가격대"
             value={formatPriceRange(typedPlace.price_range)}
           />
+          <WebsiteRow place={typedPlace} />
         </div>
       </section>
 
@@ -197,4 +198,46 @@ function InfoRow({
       </div>
     </div>
   );
+}
+
+function WebsiteRow({ place }: { place: Place }) {
+  const hasOfficial = !!place.website_url;
+  const href = hasOfficial
+    ? place.website_url!
+    : `https://www.google.com/search?q=${encodeURIComponent(
+        `${place.name} ${place.name_ja ?? ""} 京都 公式`
+      )}`;
+  const label = hasOfficial ? "공식 홈페이지" : "정보 검색";
+  const display = hasOfficial
+    ? prettyHost(place.website_url!)
+    : "Google에서 검색";
+  return (
+    <div className="flex items-start gap-3">
+      <div className="text-zinc-400 mt-0.5">
+        <Globe size={14} />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+          {label}
+        </p>
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-rose-600 dark:text-rose-300 mt-0.5 inline-flex items-center gap-1 hover:underline break-all"
+        >
+          {display}
+          <ExternalLink size={10} />
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function prettyHost(url: string) {
+  try {
+    return new URL(url).host.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
 }
