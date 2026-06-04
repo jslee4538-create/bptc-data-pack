@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { GOOGLE_OAUTH_OPTIONS, callbackUrl } from "@/lib/auth";
 import { LogIn, LogOut, Search, Sparkles, User } from "lucide-react";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -40,7 +41,8 @@ export default function Header() {
       await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          ...GOOGLE_OAUTH_OPTIONS,
+          redirectTo: callbackUrl(window.location.origin, window.location.pathname),
         },
       });
     } catch (error) {

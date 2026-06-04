@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { LogIn, Star } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { GOOGLE_OAUTH_OPTIONS, callbackUrl } from "@/lib/auth";
 import type { Review } from "@/types/database";
 
 type Props = {
@@ -24,7 +25,10 @@ export default function ReviewForm({ placeId, myReview, loggedIn }: Props) {
     const handleLogin = async () => {
       await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
+        options: {
+          ...GOOGLE_OAUTH_OPTIONS,
+          redirectTo: callbackUrl(window.location.origin, window.location.pathname),
+        },
       });
     };
     return (

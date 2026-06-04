@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays, MapPin } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import AddToCalendarButton from "@/components/AddToCalendarButton";
 import BookmarkButton from "@/components/BookmarkButton";
 import PlaceCard from "@/components/PlaceCard";
 import type { Category, Event, Place } from "@/types/database";
@@ -74,8 +75,15 @@ export default async function EventDetailPage({ params }: { params: Params }) {
         </p>
       </section>
 
-      <section className="px-4">
+      <section className="px-4 flex flex-col gap-2">
         <BookmarkButton targetType="event" targetId={typed.id} />
+        <AddToCalendarButton
+          title={typed.title}
+          description={typed.description}
+          startDate={typed.start_date}
+          endDate={typed.end_date}
+          location={typed.place ? `${typed.place.name} (${typed.place.address})` : undefined}
+        />
       </section>
 
       {typed.place && (
