@@ -46,7 +46,7 @@ export default async function EventDetailPage({ params }: { params: Params }) {
         <Link
           href="/events"
           className="absolute top-3 left-3 p-2 rounded-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md text-zinc-900 dark:text-zinc-100 shadow-md hover:bg-white"
-          aria-label="캘린더로"
+          aria-label="행사 캘린더로"
         >
           <ArrowLeft size={16} />
         </Link>
