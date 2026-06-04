@@ -6,6 +6,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import PWARegister from "@/components/PWARegister";
+import InAppBrowserNotice from "@/components/InAppBrowserNotice";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -68,6 +69,9 @@ export default async function RootLayout({
             <div className="hidden md:flex absolute top-0 left-1/2 -translate-x-1/2 w-32 h-4 bg-zinc-800 rounded-b-2xl z-50 items-center justify-center">
               <div className="w-12 h-1 bg-zinc-700 rounded-full" />
             </div>
+
+            {/* 인앱 브라우저 경고 (메신저 웹뷰에서 Google 로그인 차단 안내) */}
+            <InAppBrowserNotice />
 
             {/* App Header */}
             <Header />
